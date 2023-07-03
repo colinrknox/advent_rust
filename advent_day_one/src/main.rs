@@ -1,23 +1,73 @@
+use std::{cmp::Ordering, collections::BinaryHeap};
+
+#[derive(Clone, Eq, PartialEq)]
+struct Elf {
+    pub contents: Vec<usize>,
+}
+
+impl Elf {
+    pub fn new() -> Elf {
+        Elf {
+            contents: vec![],
+        }
+    }
+}
+
+impl Ord for Elf {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.contents.iter().sum::<usize>().cmp(&other.contents.iter().sum()).then_with(|| self.contents.len().cmp(&other.contents.len()))
+    }
+}
+
+impl PartialOrd for Elf {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        Some(self.cmp(other))
+    }
+}
 
 fn main() {
     let file_contents: String = std::fs::read_to_string(std::path::Path::new("input/elves.txt")).expect("should have been able to read the input file");
 
-    print!("{}", file_contents);
-
     let parsed_contents: Vec<Vec<&str>> = parse_input(&file_contents); 
+
+    let mut elves: Vec<Elf> = convert_parsed(&parsed_contents);
+
+    let mut heap: BinaryHeap<Elf> = BinaryHeap::from_iter(elves.into_iter());
+
+    if let Some(elf) = heap.peek() {
+        for val in elf.contents.iter() {
+            println!("{}", val);
+        }
+    }
 }
 
 fn parse_input(input: &String) -> Vec<Vec<&str>> {
     let mut result: Vec<Vec<&str>> = vec!();
     let mut set: Vec<&str> = vec![];
     for line in input.lines() {
-        print!("{}", line);
         if line == "" {
-            print!("line is equal to newline");
             result.push(set.clone());
             set = vec!();
         }
         set.push(line);
     }
-    return result
+    if !set.is_empty() {
+        result.push(set.clone());
+    }
+    result
+}
+
+fn convert_parsed(parsed: &Vec<Vec<&str>>) -> Vec<Elf> {
+    let mut result: Vec<Elf> = vec![];
+    for ele in parsed.iter() {
+        let mut elf = Elf::new();
+        for amount in ele.iter() {
+            match amount.parse::<usize>() {
+                Ok(val) => elf.contents.push(val),
+                Err(_e) => {},
+            }
+        }
+        result.push(elf);
+    }
+    result
 }
