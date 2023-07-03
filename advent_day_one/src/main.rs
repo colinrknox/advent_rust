@@ -30,14 +30,23 @@ fn main() {
 
     let parsed_contents: Vec<Vec<&str>> = parse_input(&file_contents); 
 
-    let mut elves: Vec<Elf> = convert_parsed(&parsed_contents);
+    let elves: Vec<Elf> = convert_parsed(&parsed_contents);
 
     let mut heap: BinaryHeap<Elf> = BinaryHeap::from_iter(elves.into_iter());
 
-    if let Some(elf) = heap.peek() {
-        for val in elf.contents.iter() {
-            println!("{}", val);
+    let mut sum = 0;
+    let mut i = 0;
+    while let Some(elf) = heap.pop() {
+        if i > 2 {
+            break;
         }
+        sum += elf.contents.iter().sum::<usize>();
+        i += 1;
+    }
+    println!("{}", sum);
+
+    if let Some(elf) = heap.peek() {
+        println!("{}", elf.contents.iter().sum::<usize>());
     }
 }
 
