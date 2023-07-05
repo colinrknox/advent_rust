@@ -19,7 +19,6 @@ fn get_priority(line: &String) -> usize {
     for i in 0..half {
         chars.insert(line.as_bytes()[i] as char);
     }
-    dbg!(&chars);
     for j in half..len {
         let c = line.as_bytes()[j] as char;
         if chars.contains(&c) {
@@ -29,8 +28,6 @@ fn get_priority(line: &String) -> usize {
                 96
             };
             chars.remove(&c);
-            println!("dupe: {}", c);
-            println!("c: {}, base: {}", c as usize, base);
             result += c as usize - base;
         }
     }
