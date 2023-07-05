@@ -24,10 +24,10 @@ fn main() {
 
     let mut sum: usize = 0;
     for line in file.lines() {
-        if line == "" {
+        if line.is_empty() {
             continue;
         }
-        let opp = *move_to_move.get(&line.chars().nth(0).unwrap()).unwrap();
+        let opp = *move_to_move.get(&line.chars().next().unwrap()).unwrap();
         let outcome = line.chars().nth(2).unwrap();
 
         sum += outcome_score.get(&outcome).unwrap();
@@ -37,7 +37,7 @@ fn main() {
         } else if outcome == 'Y' {
             sum += move_to_point.get(&opp).unwrap();
         } else {
-            sum += move_to_point.get(&beats.get(&beats.get(&opp).unwrap()).unwrap()).unwrap();
+            sum += move_to_point.get(beats.get(beats.get(&opp).unwrap()).unwrap()).unwrap();
         }
     }
     println!("{}", sum);
