@@ -13,10 +13,14 @@ fn main() {
     move_to_point.insert('Y', 2);
     move_to_point.insert('Z', 3);
 
+    let mut outcome_score: HashMap<char, usize> = HashMap::new();
+    outcome_score.insert('X', 0);
+    outcome_score.insert('Y', 3);
+    outcome_score.insert('Z', 6);
     let mut beats: HashMap<char, char> = HashMap::new();
-    beats.insert('X', 'Z');
-    beats.insert('Y', 'X');
-    beats.insert('Z', 'Y');
+    beats.insert('Z', 'X');
+    beats.insert('X', 'Y');
+    beats.insert('Y', 'Z');
 
     let mut sum: usize = 0;
     for line in file.lines() {
@@ -24,14 +28,17 @@ fn main() {
             continue;
         }
         let opp = *move_to_move.get(&line.chars().nth(0).unwrap()).unwrap();
-        let me = line.chars().nth(2).unwrap();
+        let outcome = line.chars().nth(2).unwrap();
 
-        if opp == me {
-            sum += 3;
-        } else if *beats.get(&opp).unwrap() != me {
-            sum += 6;
+        sum += outcome_score.get(&outcome).unwrap();
+
+        if outcome == 'Z' {
+            sum += move_to_point.get(beats.get(&opp).unwrap()).unwrap();
+        } else if outcome == 'Y' {
+            sum += move_to_point.get(&opp).unwrap();
+        } else {
+            sum += move_to_point.get(&beats.get(&beats.get(&opp).unwrap()).unwrap()).unwrap();
         }
-        sum += move_to_point.get(&me).unwrap();
     }
     println!("{}", sum);
 }
