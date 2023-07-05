@@ -1,4 +1,4 @@
-use std::{collections::HashMap, io::BufRead};
+use std::collections::HashMap;
 
 fn main() {
     let file = std::fs::read_to_string("input/test.txt").expect("Failed to read input file");
