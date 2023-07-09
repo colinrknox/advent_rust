@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use std::collections::{HashSet, HashMap};
 
 fn main() {
     let file_contents = std::fs::read_to_string("input/test.txt").unwrap();
@@ -11,7 +11,6 @@ fn main() {
 }
 
 fn get_priority(line: &String) -> usize {
-
     let mut result: usize = 0;
     let mut chars: HashSet<char> = HashSet::new();
     let half = line.len() / 2;
@@ -32,4 +31,32 @@ fn get_priority(line: &String) -> usize {
         }
     }
     result
+}
+
+
+fn get_badge(items: &String) -> usize {
+    let mut freq: HashMap<u8, usize> = HashMap::new();
+    for item in items.as_bytes() { 
+        if let Some(frequency) = freq.get(item) {
+            freq.insert(*item, frequency + 1);
+        } else {
+            freq.insert(*item, 1);
+        }
+    }
+
+    for (k, v) in freq.iter() {
+        if *v == 3 {
+            return char_conversion(*k).into();
+        }
+    }
+
+    return 0;
+}
+
+
+fn char_conversion(val: u8) -> u8 {
+    if val < 97 {
+        return val - 38u8;
+    }
+    return val - 96;
 }
