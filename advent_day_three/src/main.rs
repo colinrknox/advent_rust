@@ -4,9 +4,10 @@ fn main() {
     let file_contents = std::fs::read_to_string("input/test.txt").unwrap();
     
     let mut sum: usize = 0;
-    for line in file_contents.lines() {
-        sum += get_priority(&line.to_string());
-    }
+    // for line in file_contents.lines() {
+    //     sum += get_priority(&line.to_string());
+    // }
+    
     println!("{}", sum);
 }
 
