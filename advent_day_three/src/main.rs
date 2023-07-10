@@ -2,7 +2,7 @@ use std::collections::{HashSet, HashMap};
 
 fn main() {
     // let file_contents = std::fs::read_to_string("input/test.txt").unwrap();
-    let file_contents = std::fs::read_to_string("input/small_test.txt").unwrap();
+    let file_contents = std::fs::read_to_string("input/test.txt").unwrap();
     let mut sum: usize = 0;
     // for line in file_contents.lines() {
     //     sum += get_priority(&line.to_string());
@@ -11,8 +11,7 @@ fn main() {
     for line in file_contents.lines() {
         group.push(line.to_string());
         if group.len() == 3 {
-            println!("sum: {}", sum);
-            sum += get_badge(group.join("")) as usize;
+            sum += get_badge(&group) as usize;
             group.clear();
         }
     }
@@ -44,28 +43,24 @@ fn get_priority(line: &String) -> usize {
 }
 
 
-fn get_badge(items: Vec<String>) -> u8 {
-    let mut freq: HashMap<char, usize> = HashMap::new();
-    for elf in items {
-        for item in elf.as_bytes() { 
-            let item_convert = *item as char;
-            let f = if let Some(frequency) = freq.get(&item_convert) {
-                frequency + 1
-            } else {
-                1 
-            };
-            freq.insert(item_convert, f);
-        }
+fn get_badge(items: &Vec<String>) -> u8 {
+    let mut chars = build_set(&items[0]);
+    for elf in &items[1..] {
+        let intersect = build_set(&elf);
+        chars.retain(|x| intersect.contains(x));
     }
-
-    for (k, v) in freq.iter() {
-        println!("{} showed up 3 times!", k);
-        if *v == 3 {
-            return char_conversion(*k as u8);
-        }
+    for v in chars {
+        return char_conversion(v as u8);
     }
-
     return 0;
+}
+
+fn build_set(items: &String) -> HashSet<char> {
+    let mut res: HashSet<char> = HashSet::new();
+    for item in items.as_bytes() {
+        res.insert(*item as char);
+    }
+    res
 }
 
 
