@@ -31,5 +31,6 @@ fn parse_input(input: String) -> Vec<Pair> {
 }
 
 fn is_contained(pair: Pair) -> bool {
-    false
+    let (Elf::Assignment(a, b), Elf::Assignment(c, d)) = (pair.0, pair.1);
+    (a <= c && b >= d) || (c <= a && d >= b)
 }
