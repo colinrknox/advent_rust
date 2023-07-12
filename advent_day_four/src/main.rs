@@ -6,11 +6,10 @@ struct Pair(Elf, Elf);
 
 fn main() {
     let file_contents = std::fs::read_to_string("input/test.txt").unwrap();
-    let example = "2-4,6-8";
     let elves = parse_input(file_contents);
     let mut total = 0;
     for elf in elves {
-        if is_contained(elf) {
+        if is_overlapping(&elf) {
             total += 1;
         }
     }
@@ -30,7 +29,12 @@ fn parse_input(input: String) -> Vec<Pair> {
     res
 }
 
-fn is_contained(pair: Pair) -> bool {
-    let (Elf::Assignment(a, b), Elf::Assignment(c, d)) = (pair.0, pair.1);
+fn is_contained(pair: &Pair) -> bool {
+    let (Elf::Assignment(a, b), Elf::Assignment(c, d)) = (&pair.0, &pair.1);
     (a <= c && b >= d) || (c <= a && d >= b)
+}
+
+fn is_overlapping(pair: &Pair) -> bool {
+    let (Elf::Assignment(a, b), Elf::Assignment(c, d)) = (&pair.0, &pair.1);
+    (c >= a && c <= b) || (d >= a && d <= b) || is_contained(pair.clone())
 }
