@@ -1,3 +1,5 @@
+use std::cell::RefCell;
+
 #[derive(Debug)]
 struct Command(usize, usize, usize);
 
@@ -8,17 +10,33 @@ fn main() {
     let mut stacks: Vec<Vec<char>> = parse_state(&state_file);
     let commands = parse_commands(&move_file);
 
-    run_commands(&mut stacks, &commands);
+    // run_commands(&mut stacks, &commands);
 
+    let mut stacks_ref: Vec<RefCell<Vec<char>>> = stacks
+        .into_iter()
+        .map(|i: Vec<char>| RefCell::new(i))
+        .collect();
+
+    run_commands_9001(&mut stacks_ref, &commands);
     println!(
         "{}",
-        stacks
+        stacks_ref
             .iter()
-            .map(|v| v.last())
-            .fold("".to_string(), |p, n| [p, n.unwrap().to_string()].join(""))
+            .map(|v| String::from(v.borrow().last().unwrap().to_string()))
+            .fold("".to_string(), |p, n| [p, n].join(""))
     );
 }
 
+fn run_commands_9001(stacks: &mut Vec<RefCell<Vec<char>>>, commands: &Vec<Command>) {
+    for Command(a, b, c) in commands.iter() {
+        let mut src = stacks.get(b - 1).unwrap().borrow_mut();
+        let (start, end) = (src.len() - a, src.len());
+        let mut dest = stacks.get(c - 1).unwrap().borrow_mut();
+        for c in src.drain(start..end) {
+            dest.push(c);
+        }
+    }
+}
 fn run_commands(stacks: &mut Vec<Vec<char>>, commands: &Vec<Command>) {
     for Command(a, b, c) in commands.iter() {
         for _ in 0..*a {
